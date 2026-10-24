@@ -13,5 +13,10 @@
         "--query-driver=${env:CUBE_BUNDLE_PATH}/st-arm-clang/21.1.1+st.7/bin/starm-clang++*"
     ],
     "editor.formatOnSave": true,
-    "editor.defaultFormatter": "xaver.clang-format"
+    "[c]": {
+        "editor.defaultFormatter": "xaver.clang-format",
+    },
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    }
 }

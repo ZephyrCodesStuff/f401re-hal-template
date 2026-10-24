@@ -6,6 +6,10 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 set(CMAKE_C_COMPILER_FORCED TRUE)
 set(CMAKE_CXX_COMPILER_FORCED TRUE)
 
+# Target MCU selection: STM32F401RE (default) or STM32G491RE
+set(TARGET_MCU "STM32F401RE" CACHE STRING "Target MCU: STM32F401RE or STM32G491RE")
+set_property(CACHE TARGET_MCU PROPERTY STRINGS STM32F401RE STM32G491RE)
+
 # Set target definition variables required by the toolchain file
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/target.cmake)
 
@@ -62,8 +66,8 @@ target_link_directories(${PROJECT_NAME} PRIVATE
 
 # Add additional linker libraries
 target_link_libraries(${PROJECT_NAME} PRIVATE
-  # Hardware Abstraction Library for STM32-F4 series
-  stm32f4_hal
+  # Unified Hardware Abstraction Library for STM32
+  stm32_hal
 
   # FreeRTOS Kernel
   freertos_kernel

@@ -1,5 +1,5 @@
 #include "FreeRTOS.h"
-#include "stm32f4xx_hal.h"
+#include "stm32_hal.h"
 #include "task.h"
 
 /* FreeRTOS calls this every 1ms SysTick interrupt */
@@ -12,7 +12,7 @@ static void BlinkTask( void* pvParameters )
     for ( ;; )
     {
         HAL_GPIO_TogglePin( GPIOA, GPIO_PIN_5 );
-        vTaskDelay( pdMS_TO_TICKS( 2500 ) );
+        vTaskDelay( pdMS_TO_TICKS( 500 ) );
     }
 }
 
