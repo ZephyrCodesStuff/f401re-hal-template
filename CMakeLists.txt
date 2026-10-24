@@ -28,6 +28,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/flags.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/components.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/files.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/hal.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/freertos.cmake)
 
 # Add sources to executable/library
 target_sources(${PROJECT_NAME} PRIVATE
@@ -63,4 +64,7 @@ target_link_directories(${PROJECT_NAME} PRIVATE
 target_link_libraries(${PROJECT_NAME} PRIVATE
   # Hardware Abstraction Library for STM32-F4 series
   stm32f4_hal
+
+  # FreeRTOS Kernel
+  freertos_kernel
 )
