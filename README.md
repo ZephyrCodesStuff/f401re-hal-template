@@ -1,5 +1,8 @@
 # STM32 FreeRTOS Template (F401RE & G491RE)
 
+[![CI](https://github.com/zephyrcodesstuff/stm32-rtos-template/actions/workflows/ci.yml/badge.svg)](https://github.com/zephyrcodesstuff/stm32-rtos-template/actions/workflows/ci.yml)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](LICENSE)
+
 A lightweight, modern STM32 + FreeRTOS boilerplate powered by **CMake FetchContent** and **`just`**.
 
 > [!NOTE]
