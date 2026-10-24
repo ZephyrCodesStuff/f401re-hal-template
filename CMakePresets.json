@@ -5,7 +5,10 @@
             "name": "default",
             "hidden": true,
             "generator": "Ninja",
-            "binaryDir": "${sourceDir}/build/${presetName}"
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_MAKE_PROGRAM": "$env{HOME}/Library/Application Support/stm32cube/bundles/ninja/1.13.2+st.1/bin/ninja"
+            }
         },
         {
             "name": "F401RE-Debug",
