@@ -14,11 +14,14 @@ set_property(CACHE TARGET_MCU PROPERTY STRINGS STM32F401RE STM32G491RE)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/target.cmake)
 
 # Auto-detect ninja build tool across Linux (apt) and macOS (brew / ST bundles)
+file(GLOB _CUBE_NINJA_DIRS
+  "$ENV{HOME}/Library/Application Support/stm32cube/bundles/ninja/*/bin"
+  "$ENV{HOME}/.stm32cube/bundles/ninja/*/bin"
+)
 if(NOT CMAKE_MAKE_PROGRAM)
   find_program(NINJA_EXECUTABLE NAMES ninja ninja-build
     PATHS
-      "$ENV{HOME}/Library/Application Support/stm32cube/bundles/ninja/1.13.2+st.1/bin"
-      "$ENV{HOME}/.stm32cube/bundles/ninja/1.13.2+st.1/bin"
+      ${_CUBE_NINJA_DIRS}
       "/opt/homebrew/bin"
       "/usr/local/bin"
       "/usr/bin"
@@ -26,6 +29,20 @@ if(NOT CMAKE_MAKE_PROGRAM)
   if(NINJA_EXECUTABLE)
     set(CMAKE_MAKE_PROGRAM "${NINJA_EXECUTABLE}" CACHE FILEPATH "Path to ninja build tool" FORCE)
   endif()
+endif()
+
+# Auto-detect st-arm-clang compiler toolchain across Linux and macOS bundles
+file(GLOB _CUBE_CLANG_DIRS
+  "$ENV{HOME}/Library/Application Support/stm32cube/bundles/st-arm-clang/*/bin"
+  "$ENV{HOME}/.stm32cube/bundles/st-arm-clang/*/bin"
+)
+find_program(STARM_CLANG_EXE NAMES starm-clang
+  PATHS ${_CUBE_CLANG_DIRS}
+)
+if(STARM_CLANG_EXE)
+  get_filename_component(_STARM_BIN_DIR "${STARM_CLANG_EXE}" DIRECTORY)
+  set(ENV{PATH} "${_STARM_BIN_DIR}:$ENV{PATH}")
+  list(PREPEND CMAKE_PROGRAM_PATH "${_STARM_BIN_DIR}")
 endif()
 
 # Set the toolchain file for cross-compilation
@@ -42,12 +59,20 @@ set(PROJECT_NAME sandbox)
 # Create an executable object type
 add_executable(${PROJECT_NAME})
 
+# Optional CMSIS-RTOS v2 wrapper (CubeMX compatibility: osEventFlagsWait, osThreadNew, etc.)
+option(ENABLE_CMSIS_OS2 "Enable CMSIS-RTOS v2 API wrapper over FreeRTOS" ON)
+
 # Include additional CMake files for flags, components, and files
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/flags.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/components.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/files.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/hal.cmake)
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/freertos.cmake)
+
+if(ENABLE_CMSIS_OS2)
+  include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/freertos-cmsis.cmake)
+else()
+  include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/freertos.cmake)
+endif()
 
 # Add sources to executable/library
 target_sources(${PROJECT_NAME} PRIVATE
@@ -84,6 +109,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
   # Unified Hardware Abstraction Library for STM32
   stm32_hal
 
-  # FreeRTOS Kernel
-  freertos_kernel
+  # FreeRTOS Kernel (or CMSIS-RTOS2 wrapper)
+  $<$<BOOL:${ENABLE_CMSIS_OS2}>:cmsis_os2>
+  $<$<NOT:$<BOOL:${ENABLE_CMSIS_OS2}>>:freertos_kernel>
 )

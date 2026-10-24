@@ -1,4 +1,5 @@
 #include "FreeRTOS.h"
+#include "cmsis_os2.h"
 #include "stm32_hal.h"
 #include "task.h"
 
@@ -28,6 +29,9 @@ int main( void )
     HAL_GPIO_Init( GPIOA, &gpio );
 
     xTaskCreate( BlinkTask, "Blink", 128, NULL, 1, NULL );
+
+    uint32_t res = osEventFlagsWait( NULL, 0x01, osFlagsWaitAny, 0 );
+    (void)res;
 
     vTaskStartScheduler();
 

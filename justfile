@@ -17,6 +17,10 @@ default:
 # Default settings (can be overridden on command line: just target=g491 build)
 target := "f401"
 build_type := "Debug"
+cmsis := "true"
+
+# Resolve CMSIS-RTOS2 flag
+_cmsis_flag := if cmsis == "true" { "-DENABLE_CMSIS_OS2=ON" } else { "-DENABLE_CMSIS_OS2=OFF" }
 
 # Resolve CMake preset from target and build type
 _preset := if target == "g491" {
@@ -35,20 +39,23 @@ _chip := if target == "g491" {
 _elf := "build/" + _preset + "/sandbox.elf"
 
 # Configure CMake preset
-configure target=target build_type=build_type:
-    cmake --preset {{_preset}}
+configure target=target build_type=build_type cmsis=cmsis:
+    cmake --preset {{_preset}} {{_cmsis_flag}}
 
 # Build firmware binary (sandbox.elf), auto-configuring if needed
-build target=target build_type=build_type:
+build target=target build_type=build_type cmsis=cmsis:
     #!/usr/bin/env bash
-    if [ ! -f "build/{{_preset}}/build.ninja" ]; then
-        echo "Configuring preset {{_preset}}..."
-        cmake --preset {{_preset}}
+    set -euo pipefail
+    CACHE="build/{{_preset}}/CMakeCache.txt"
+    WANT_CMSIS="{{if cmsis == "true" { "ENABLE_CMSIS_OS2:BOOL=ON" } else { "ENABLE_CMSIS_OS2:BOOL=OFF" }}}"
+    if [ ! -f "build/{{_preset}}/build.ninja" ] || ! grep -q "$WANT_CMSIS" "$CACHE" 2>/dev/null; then
+        echo "Target {{_preset}} (cmsis={{cmsis}}) not configured or settings changed. Configuring..."
+        cmake --preset {{_preset}} {{_cmsis_flag}}
     fi
     cmake --build --preset {{_preset}}
 
-# Flash firmware to the microcontroller (auto-builds if needed)
-flash target=target build_type=build_type: (build target build_type)
+# Flash firmware to the microcontroller (auto-builds & auto-configures if needed)
+flash target=target build_type=build_type cmsis=cmsis: (build target build_type cmsis)
     @echo "Flashing {{_chip}} with {{_elf}}..."
     @if command -v probe-rs >/dev/null 2>&1; then \
         probe-rs download --chip {{_chip}} {{_elf}} && \
@@ -64,7 +71,7 @@ flash target=target build_type=build_type: (build target build_type)
     fi
 
 # Flash and stream logs / RTT output
-run target=target build_type=build_type: (build target build_type)
+run target=target build_type=build_type cmsis=cmsis: (build target build_type cmsis)
     probe-rs run --chip {{_chip}} {{_elf}}
 
 # Reset connected MCU
@@ -112,4 +119,4 @@ clean target="":
     fi
 
 # Clean and rebuild from scratch
-rebuild target=target build_type=build_type: (clean target) (build target build_type)
+rebuild target=target build_type=build_type cmsis=cmsis: (clean target) (build target build_type cmsis)
