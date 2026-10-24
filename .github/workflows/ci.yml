@@ -33,6 +33,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
+            ~/.local/stm32cube
             ~/.stm32cube
             ~/.local/share/stm32cube
           key: stm32cube-bundles-${{ runner.os }}-${{ hashFiles('.settings/bundles-lock.store.json') }}
@@ -42,13 +43,15 @@ jobs:
       - name: Install STM32CubeCLI and Toolchain Bundles
         run: |
           curl -fsSL https://developer.st.com/bundles/install/install.sh | bash -
+          export PATH="$HOME/.local/stm32cube/bin:$HOME/.local/bin:$HOME/.stm32cube/bin:$PATH"
+          echo "$HOME/.local/stm32cube/bin" >> $GITHUB_PATH
           echo "$HOME/.local/bin" >> $GITHUB_PATH
           echo "$HOME/.stm32cube/bin" >> $GITHUB_PATH
-          export PATH="$HOME/.local/bin:$HOME/.stm32cube/bin:$PATH"
-          cube bundle install --project
+
+          cube bundle install --project --yes
 
           # Export discovered toolchain binary directories to GITHUB_PATH
-          for tool_bin in $(find "$HOME/.stm32cube/bundles" "$HOME/.local/share/stm32cube/bundles" -type d -name "bin" 2>/dev/null); do
+          for tool_bin in $(find "$HOME/.local/stm32cube" "$HOME/.stm32cube" "$HOME/.local/share/stm32cube" -type d -name "bin" 2>/dev/null); do
             echo "$tool_bin" >> $GITHUB_PATH
           done
 

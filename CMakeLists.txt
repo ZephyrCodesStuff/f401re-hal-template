@@ -16,6 +16,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/target.cmake)
 # Auto-detect ninja build tool across Linux (apt) and macOS (brew / ST bundles)
 file(GLOB _CUBE_NINJA_DIRS
   "$ENV{HOME}/Library/Application Support/stm32cube/bundles/ninja/*/bin"
+  "$ENV{HOME}/.local/stm32cube/bundles/ninja/*/bin"
   "$ENV{HOME}/.stm32cube/bundles/ninja/*/bin"
   "$ENV{HOME}/.local/share/stm32cube/bundles/ninja/*/bin"
 )
@@ -35,6 +36,7 @@ endif()
 # Auto-detect st-arm-clang compiler toolchain across Linux and macOS bundles
 file(GLOB _CUBE_CLANG_DIRS
   "$ENV{HOME}/Library/Application Support/stm32cube/bundles/st-arm-clang/*/bin"
+  "$ENV{HOME}/.local/stm32cube/bundles/st-arm-clang/*/bin"
   "$ENV{HOME}/.stm32cube/bundles/st-arm-clang/*/bin"
   "$ENV{HOME}/.local/share/stm32cube/bundles/st-arm-clang/*/bin"
 )

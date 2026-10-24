@@ -6,10 +6,11 @@ current_os := os()
 cube_bundles := if current_os == "macos" {
     env_var_or_default("HOME", "") + "/Library/Application Support/stm32cube/bundles"
 } else {
-    env_var_or_default("HOME", "") + "/.stm32cube/bundles"
+    env_var_or_default("HOME", "") + "/.local/stm32cube/bundles"
 }
+alt_bundles := env_var_or_default("HOME", "") + "/.stm32cube/bundles"
 local_share_bundles := env_var_or_default("HOME", "") + "/.local/share/stm32cube/bundles"
-export PATH := env_var_or_default("PATH", "") + ":" + cube_bundles + "/ninja/1.13.2+st.1/bin:" + cube_bundles + "/st-arm-clang/21.1.1+st.7/bin:" + local_share_bundles + "/ninja/1.13.2+st.1/bin:" + local_share_bundles + "/st-arm-clang/21.1.1+st.7/bin:" + env_var_or_default("HOME", "") + "/.local/bin:" + env_var_or_default("HOME", "") + "/.stm32cube/bin"
+export PATH := env_var_or_default("PATH", "") + ":" + cube_bundles + "/ninja/1.13.2+st.1/bin:" + cube_bundles + "/st-arm-clang/21.1.1+st.7/bin:" + alt_bundles + "/ninja/1.13.2+st.1/bin:" + alt_bundles + "/st-arm-clang/21.1.1+st.7/bin:" + local_share_bundles + "/ninja/1.13.2+st.1/bin:" + local_share_bundles + "/st-arm-clang/21.1.1+st.7/bin:" + env_var_or_default("HOME", "") + "/.local/stm32cube/bin:" + env_var_or_default("HOME", "") + "/.local/bin:" + env_var_or_default("HOME", "") + "/.stm32cube/bin"
 
 # Default recipe: list all available commands
 default:
