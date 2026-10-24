@@ -8,7 +8,8 @@ cube_bundles := if current_os == "macos" {
 } else {
     env_var_or_default("HOME", "") + "/.stm32cube/bundles"
 }
-export PATH := env_var_or_default("PATH", "") + ":" + cube_bundles + "/ninja/1.13.2+st.1/bin:" + cube_bundles + "/st-arm-clang/21.1.1+st.7/bin"
+local_share_bundles := env_var_or_default("HOME", "") + "/.local/share/stm32cube/bundles"
+export PATH := env_var_or_default("PATH", "") + ":" + cube_bundles + "/ninja/1.13.2+st.1/bin:" + cube_bundles + "/st-arm-clang/21.1.1+st.7/bin:" + local_share_bundles + "/ninja/1.13.2+st.1/bin:" + local_share_bundles + "/st-arm-clang/21.1.1+st.7/bin:" + env_var_or_default("HOME", "") + "/.local/bin:" + env_var_or_default("HOME", "") + "/.stm32cube/bin"
 
 # Default recipe: list all available commands
 default:
@@ -90,7 +91,9 @@ size target=target build_type=build_type:
         echo "Binary not found at {{_elf}}. Run 'just build' first."
         exit 1
     fi
-    if command -v arm-none-eabi-size >/dev/null 2>&1; then
+    if command -v starm-size >/dev/null 2>&1; then
+        starm-size "{{_elf}}"
+    elif command -v arm-none-eabi-size >/dev/null 2>&1; then
         arm-none-eabi-size "{{_elf}}"
     elif command -v llvm-size >/dev/null 2>&1; then
         llvm-size "{{_elf}}"
@@ -102,9 +105,10 @@ size target=target build_type=build_type:
 tidy target=target build_type=build_type:
     #!/usr/bin/env bash
     if command -v clang-tidy >/dev/null 2>&1; then
-        clang-tidy Src/*.c -p "build/{{_preset}}"
+        FILES=$(find Src -name "*.c" ! -name "sys*.c")
+        clang-tidy $FILES -p "build/{{_preset}}"
     else
-        echo "clang-tidy command not found. (Install via 'brew install llvm')"
+        echo "clang-tidy command not found. (Install via 'brew install llvm' or 'apt install clang-tidy')"
     fi
 
 # Clean build artifacts

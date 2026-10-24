@@ -17,6 +17,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/target.cmake)
 file(GLOB _CUBE_NINJA_DIRS
   "$ENV{HOME}/Library/Application Support/stm32cube/bundles/ninja/*/bin"
   "$ENV{HOME}/.stm32cube/bundles/ninja/*/bin"
+  "$ENV{HOME}/.local/share/stm32cube/bundles/ninja/*/bin"
 )
 if(NOT CMAKE_MAKE_PROGRAM)
   find_program(NINJA_EXECUTABLE NAMES ninja ninja-build
@@ -35,6 +36,7 @@ endif()
 file(GLOB _CUBE_CLANG_DIRS
   "$ENV{HOME}/Library/Application Support/stm32cube/bundles/st-arm-clang/*/bin"
   "$ENV{HOME}/.stm32cube/bundles/st-arm-clang/*/bin"
+  "$ENV{HOME}/.local/share/stm32cube/bundles/st-arm-clang/*/bin"
 )
 find_program(STARM_CLANG_EXE NAMES starm-clang
   PATHS ${_CUBE_CLANG_DIRS}
