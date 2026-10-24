@@ -1,0 +1,202 @@
+{
+  "name": "sandbox",
+  "configurations": [
+    {
+      "name": "Debug",
+      "type": "Executable",
+      "output_filename": "sandbox",
+      "mcu": "STM32F401RET6",
+      "board": "NUCLEO-F401RE",
+      "toolchain_type": "CLANG",
+      "toolchain_prefix": "",
+      "sources": [
+        {
+          "path": "Src/syscall.c"
+        },
+        {
+          "path": "Src/sysmem.c"
+        },
+        {
+          "path": "Src/main.c"
+        },
+        {
+          "path": "Src/startup_stm32f401xx.S"
+        }
+      ],
+      "tools": [
+        {
+          "type": "c_assembler",
+          "flags": [
+            "-fstack-usage",
+            "-std=gnu11",
+            "-Wall",
+            "-Wextra",
+            "-Wpedantic",
+            "-Wno-unused-parameter",
+            "-O0",
+            "-g3",
+            "-ggdb",
+            "-IInc",
+            "-DRTE_DEVICE_STARTUP_STM32F4XX",
+            "-DDEBUG",
+            "-x",
+            "assembler-with-cpp",
+            "-MP"
+          ]
+        },
+        {
+          "type": "c_compiler",
+          "flags": [
+            "-fstack-usage",
+            "-std=gnu11",
+            "-Wall",
+            "-Wextra",
+            "-Wpedantic",
+            "-Wno-unused-parameter",
+            "-O0",
+            "-g3",
+            "-ggdb",
+            "-IInc",
+            "-DRTE_DEVICE_STARTUP_STM32F4XX",
+            "-DDEBUG"
+          ]
+        },
+        {
+          "type": "cpp_compiler",
+          "flags": [
+            "-fstack-usage",
+            "-std=gnu11",
+            "-Wall",
+            "-Wextra",
+            "-Wpedantic",
+            "-Wno-unused-parameter",
+            "-O0",
+            "-g3",
+            "-ggdb",
+            "-IInc",
+            "-DRTE_DEVICE_STARTUP_STM32F4XX",
+            "-DDEBUG",
+            "-fno-rtti",
+            "-fno-exceptions",
+            "-fno-threadsafe-statics"
+          ]
+        },
+        {
+          "type": "cpp_linker",
+          "flags": [
+            "-Tstm32f401xe_flash.ld",
+            "-Wl,-Map=sandbox.map",
+            "-Wl,--start-group",
+            "-lc",
+            "-lm",
+            "-lc++",
+            "-lc++abi",
+            "-z",
+            "noexecstack",
+            "-Wl,--end-group",
+            "-Wl,-z,max-page-size=8",
+            "-Wl,--print-memory-usage",
+            "-Wl,--gc-sections"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Release",
+      "type": "Executable",
+      "output_filename": "sandbox",
+      "mcu": "STM32F401RET6",
+      "board": "NUCLEO-F401RE",
+      "toolchain_type": "CLANG",
+      "toolchain_prefix": "",
+      "sources": [
+        {
+          "path": "Src/syscall.c"
+        },
+        {
+          "path": "Src/sysmem.c"
+        },
+        {
+          "path": "Src/main.c"
+        },
+        {
+          "path": "Src/startup_stm32f401xx.S"
+        }
+      ],
+      "tools": [
+        {
+          "type": "c_assembler",
+          "flags": [
+            "-fstack-usage",
+            "-std=gnu11",
+            "-Wall",
+            "-Wextra",
+            "-Wpedantic",
+            "-Wno-unused-parameter",
+            "-Oz",
+            "-IInc",
+            "-DRTE_DEVICE_STARTUP_STM32F4XX",
+            "-x",
+            "assembler-with-cpp",
+            "-MP"
+          ]
+        },
+        {
+          "type": "c_compiler",
+          "flags": [
+            "-fstack-usage",
+            "-std=gnu11",
+            "-Wall",
+            "-Wextra",
+            "-Wpedantic",
+            "-Wno-unused-parameter",
+            "-Oz",
+            "-IInc",
+            "-DRTE_DEVICE_STARTUP_STM32F4XX"
+          ]
+        },
+        {
+          "type": "cpp_compiler",
+          "flags": [
+            "-fstack-usage",
+            "-std=gnu11",
+            "-Wall",
+            "-Wextra",
+            "-Wpedantic",
+            "-Wno-unused-parameter",
+            "-Oz",
+            "-IInc",
+            "-DRTE_DEVICE_STARTUP_STM32F4XX",
+            "-fno-rtti",
+            "-fno-exceptions",
+            "-fno-threadsafe-statics"
+          ]
+        },
+        {
+          "type": "cpp_linker",
+          "flags": [
+            "-Tstm32f401xe_flash.ld",
+            "-Wl,-Map=sandbox.map",
+            "-Wl,--start-group",
+            "-lc",
+            "-lm",
+            "-lc++",
+            "-lc++abi",
+            "-z",
+            "noexecstack",
+            "-Wl,--end-group",
+            "-Wl,-z,max-page-size=8",
+            "-Wl,--print-memory-usage",
+            "-Wl,--gc-sections"
+          ]
+        }
+      ]
+    }
+  ],
+  "source_ide": "Empty",
+  "path": "/var/folders/4m/w76v0vw56xj14754nvwx97w80000gn/T/stm32cube_for_vscode_empty_project_zMf4lm",
+  "languages": [
+    "CPP",
+    "C"
+  ]
+}
