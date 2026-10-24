@@ -1,6 +1,9 @@
 # STM32 FreeRTOS Template (F401RE & G491RE)
 
-A lightweight, modern STM32 + FreeRTOS boilerplate powered by **CMake FetchContent** and **`just`**. Dependencies (CMSIS, HAL drivers, FreeRTOS-Kernel) are downloaded automatically during CMake configuration—no Git submodules required.
+A lightweight, modern STM32 + FreeRTOS boilerplate powered by **CMake FetchContent** and **`just`**.
+
+> [!NOTE]
+> Dependencies (CMSIS, HAL drivers, FreeRTOS-Kernel) are downloaded automatically during CMake configuration.
 
 ---
 
@@ -20,7 +23,8 @@ brew install probe-rs/probe-rs/probe-rs
 brew install arm-none-eabi-gcc
 ```
 
-> **Compiler Note**: This project uses the **ST-Arm-Clang** toolchain installed automatically by the **STM32Cube for VS Code extension** (located in `~/Library/Application Support/stm32cube/bundles`).
+> [!NOTE]
+> This project uses the **ST-Arm-Clang** toolchain installed automatically by the **STM32Cube for VS Code extension** (located in `~/Library/Application Support/stm32cube/bundles`).
 
 ---
 
@@ -83,6 +87,9 @@ Click the **CMake Preset** in the bottom status bar and select:
 ---
 
 ## Project Structure
+
+> [!TIP]
+> Configure your board's peripherals and settings in the `Inc/*.h` files.
 
 ```text
 ├── CMakeLists.txt              # Root build configuration
