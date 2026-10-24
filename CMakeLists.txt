@@ -13,6 +13,21 @@ set_property(CACHE TARGET_MCU PROPERTY STRINGS STM32F401RE STM32G491RE)
 # Set target definition variables required by the toolchain file
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/target.cmake)
 
+# Auto-detect ninja build tool across Linux (apt) and macOS (brew / ST bundles)
+if(NOT CMAKE_MAKE_PROGRAM)
+  find_program(NINJA_EXECUTABLE NAMES ninja ninja-build
+    PATHS
+      "$ENV{HOME}/Library/Application Support/stm32cube/bundles/ninja/1.13.2+st.1/bin"
+      "$ENV{HOME}/.stm32cube/bundles/ninja/1.13.2+st.1/bin"
+      "/opt/homebrew/bin"
+      "/usr/local/bin"
+      "/usr/bin"
+  )
+  if(NINJA_EXECUTABLE)
+    set(CMAKE_MAKE_PROGRAM "${NINJA_EXECUTABLE}" CACHE FILEPATH "Path to ninja build tool" FORCE)
+  endif()
+endif()
+
 # Set the toolchain file for cross-compilation
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/starm-clang.cmake)
 

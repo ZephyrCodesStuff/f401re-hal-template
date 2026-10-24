@@ -9,22 +9,38 @@ A lightweight, modern STM32 + FreeRTOS boilerplate powered by **CMake FetchConte
 
 ## Prerequisites
 
-Install the required tools (macOS via Homebrew):
+### On Ubuntu / Debian Linux:
+
+```bash
+# 1. Build tools & compiler utilities
+sudo apt update
+sudo apt install -y cmake ninja-build gcc-arm-none-eabi just
+
+# 2. Flasher (probe-rs installer)
+curl -L --proto '=https' --tlsv1.2 -sSf https://probe.rs/install.sh | sh
+
+# 3. USB permissions (udev rules for ST-Link / probe-rs)
+# Required on Linux so non-root users can access the ST-Link USB programmer
+curl -fsSL https://probe.rs/files/69-probe-rs.rules | sudo tee /etc/udev/rules.d/69-probe-rs.rules
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+```
+
+### On macOS (Homebrew):
 
 ```bash
 # Build system & command runner
 brew install cmake ninja just
 
-# Flasher / Debugger (probe-rs recommended)
+# Flasher / Debugger
 brew install probe-rs/probe-rs/probe-rs
-# or via cargo: cargo install probe-rs-tools
 
 # Memory footprint utility (optional)
 brew install arm-none-eabi-gcc
 ```
 
 > [!NOTE]
-> This project uses the **ST-Arm-Clang** toolchain installed automatically by the **STM32Cube for VS Code extension** (located in `~/Library/Application Support/stm32cube/bundles`).
+> This project uses the **ST-Arm-Clang** toolchain. On both Linux (`~/.stm32cube/bundles`) and macOS (`~/Library/Application Support/stm32cube/bundles`), it is automatically provisioned when opening the workspace in VS Code with the **STM32Cube for VS Code extension**. The [`justfile`](justfile) automatically injects these toolchain paths on both operating systems.
 
 ---
 

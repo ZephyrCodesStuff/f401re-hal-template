@@ -1,7 +1,13 @@
 set dotenv-load := true
 
+current_os := os()
+
 # Inject STM32Cube bundles (Ninja, Clang) to PATH if present
-cube_bundles := env_var_or_default("HOME", "") + "/Library/Application Support/stm32cube/bundles"
+cube_bundles := if current_os == "macos" {
+    env_var_or_default("HOME", "") + "/Library/Application Support/stm32cube/bundles"
+} else {
+    env_var_or_default("HOME", "") + "/.stm32cube/bundles"
+}
 export PATH := env_var_or_default("PATH", "") + ":" + cube_bundles + "/ninja/1.13.2+st.1/bin:" + cube_bundles + "/st-arm-clang/21.1.1+st.7/bin"
 
 # Default recipe: list all available commands
