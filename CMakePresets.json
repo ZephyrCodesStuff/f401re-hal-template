@@ -8,76 +8,78 @@
             "binaryDir": "${sourceDir}/build/${presetName}"
         },
         {
-            "name": "F401RE-Debug",
+            "name": "STM32F401RE-Debug",
             "inherits": "default",
             "displayName": "STM32F401RE Debug",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
-                "TARGET_MCU": "STM32F401RE"
+                "TARGET_BOARD": "STM32F401RE"
             }
         },
         {
-            "name": "F401RE-Release",
+            "name": "STM32F401RE-Release",
             "inherits": "default",
             "displayName": "STM32F401RE Release",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
-                "TARGET_MCU": "STM32F401RE"
+                "TARGET_BOARD": "STM32F401RE"
             }
         },
         {
-            "name": "G491RE-Debug",
+            "name": "STM32G491RE-Debug",
             "inherits": "default",
             "displayName": "STM32G491RE Debug",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
-                "TARGET_MCU": "STM32G491RE"
+                "TARGET_BOARD": "STM32G491RE"
             }
         },
         {
-            "name": "G491RE-Release",
+            "name": "STM32G491RE-Release",
             "inherits": "default",
             "displayName": "STM32G491RE Release",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
-                "TARGET_MCU": "STM32G491RE"
+                "TARGET_BOARD": "STM32G491RE"
             }
         },
         {
-            "name": "Debug",
-            "inherits": "F401RE-Debug",
-            "displayName": "Default Debug (F401RE)"
-        },
-        {
-            "name": "Release",
-            "inherits": "F401RE-Release",
-            "displayName": "Default Release (F401RE)"
-        }
-    ],
-    "buildPresets": [
-        {
             "name": "F401RE-Debug",
-            "configurePreset": "F401RE-Debug"
+            "inherits": "STM32F401RE-Debug",
+            "hidden": true
         },
         {
             "name": "F401RE-Release",
-            "configurePreset": "F401RE-Release"
+            "inherits": "STM32F401RE-Release",
+            "hidden": true
         },
         {
             "name": "G491RE-Debug",
-            "configurePreset": "G491RE-Debug"
+            "inherits": "STM32G491RE-Debug",
+            "hidden": true
         },
         {
             "name": "G491RE-Release",
-            "configurePreset": "G491RE-Release"
+            "inherits": "STM32G491RE-Release",
+            "hidden": true
         },
         {
             "name": "Debug",
-            "configurePreset": "Debug"
+            "inherits": "STM32F401RE-Debug",
+            "displayName": "Default Debug (STM32F401RE)"
         },
         {
             "name": "Release",
-            "configurePreset": "Release"
+            "inherits": "STM32F401RE-Release",
+            "displayName": "Default Release (STM32F401RE)"
         }
+    ],
+    "buildPresets": [
+        { "name": "STM32F401RE-Debug", "configurePreset": "STM32F401RE-Debug" },
+        { "name": "STM32F401RE-Release", "configurePreset": "STM32F401RE-Release" },
+        { "name": "STM32G491RE-Debug", "configurePreset": "STM32G491RE-Debug" },
+        { "name": "STM32G491RE-Release", "configurePreset": "STM32G491RE-Release" },
+        { "name": "Debug", "configurePreset": "Debug" },
+        { "name": "Release", "configurePreset": "Release" }
     ]
 }

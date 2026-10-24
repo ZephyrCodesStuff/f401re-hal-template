@@ -78,10 +78,12 @@ extern uint32_t SystemCoreClock;
 #define INCLUDE_xTimerPendFunctionCall       1
 
 /* CMSIS Device Header Mapping for CMSIS-RTOS2 */
-#if defined(STM32F401xE)
-  #define CMSIS_device_header "stm32f4xx.h"
-#elif defined(STM32G491xx)
-  #define CMSIS_device_header "stm32g4xx.h"
+#ifndef CMSIS_device_header
+  #if defined(STM32F401xE)
+    #define CMSIS_device_header "stm32f4xx.h"
+  #elif defined(STM32G491xx)
+    #define CMSIS_device_header "stm32g4xx.h"
+  #endif
 #endif
 
 #endif /* FREERTOS_CONFIG_H */

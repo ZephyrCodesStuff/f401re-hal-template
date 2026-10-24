@@ -105,24 +105,45 @@ Click the **CMake Preset** in the bottom status bar and select:
 
 ---
 
-## Project Structure
+## Adding a New Board
 
-> [!TIP]
-> Configure your board's peripherals and settings in the `Inc/*.h` files.
+The project uses a modular `boards/` architecture. To add any new STM32 board:
+
+1. Create `boards/<BOARD_NAME>/` (e.g. `boards/STM32L476RG/`):
+   - `board.cmake` (specifies MCU model, family, core, and tags)
+   - `stm32<family>xx_hal_conf.h` (peripheral configuration)
+   - `flash.ld` (board linker script)
+2. Add a preset to `CMakePresets.json` (optional, for IDE / shorthand access).
+3. Build immediately: `just target=<BOARD_NAME> build`.
+
+---
+
+## Project Structure
 
 ```text
 ├── CMakeLists.txt              # Root build configuration
 ├── CMakePresets.json           # Target presets (F401RE / G491RE, Debug / Release)
-├── justfile                    # Build, flash, and utility shortcuts
+├── justfile                    # Clean task runner (~100 lines)
+├── boards/                     # Modular board configurations
+│   ├── STM32F401RE/
+│   │   ├── board.cmake         # MCU model, family (f4), core, tags, debugger
+│   │   ├── stm32f4xx_hal_conf.h
+│   │   └── flash.ld
+│   └── STM32G491RE/
+│       ├── board.cmake         # MCU model, family (g4), core, tags, debugger
+│       ├── stm32g4xx_hal_conf.h
+│       └── flash.ld
 ├── cmake/
-│   ├── hal.cmake               # FetchContent rules for CMSIS Core, Device & HAL
-│   ├── freertos.cmake          # FetchContent rules for FreeRTOS-Kernel (ARM_CM4F)
+│   ├── hal.cmake               # Universal family-based FetchContent HAL driver
+│   ├── freertos.cmake          # FreeRTOS-Kernel fetch rules
+│   ├── freertos-cmsis.cmake    # CMSIS-RTOS2 wrapper fetch rules
 │   └── starm-clang.cmake       # ST-Arm-Clang toolchain configuration
 ├── Inc/
-│   ├── stm32_hal.h             # Portable HAL wrapper header (auto-includes F4 or G4 HAL)
-│   ├── stm32f4xx_hal_conf.h    # HAL module configuration for F4
-│   ├── stm32g4xx_hal_conf.h    # HAL module configuration for G4
-│   └── FreeRTOSConfig.h        # FreeRTOS kernel configuration
+│   ├── stm32_hal.h             # Universal HAL wrapper (#include STM32_HAL_HEADER)
+│   ├── FreeRTOSConfig.h        # FreeRTOS kernel configuration
+│   └── RTE_Components.h        # CMSIS stub header
 └── Src/
-    └── main.c                  # FreeRTOS LED blink task & SysTick hook
+    ├── main.c                  # FreeRTOS blink task & SysTick hook
+    ├── syscall.c               # POSIX stubs
+    └── sysmem.c                # Dynamic memory allocator stubs
 ```

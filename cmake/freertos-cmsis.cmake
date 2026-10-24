@@ -30,12 +30,8 @@ target_compile_definitions(freertos_config INTERFACE
     USE_CMSIS_OS2
 )
 
-# Resolve device header name for CMSIS_device_header
-if(TARGET_MCU STREQUAL "STM32G491RE")
-    set(CMSIS_DEV_HDR "stm32g4xx.h")
-else()
-    set(CMSIS_DEV_HDR "stm32f4xx.h")
-endif()
+# Resolve device header name dynamically from board family
+set(CMSIS_DEV_HDR "stm32${MCU_FAMILY}xx.h")
 
 # Define CMSIS-RTOS2 library target
 add_library(cmsis_os2 STATIC

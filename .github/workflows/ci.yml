@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   build-and-lint:
-    name: Build & Lint (Single Runner)
+    name: Build & Lint (All Boards)
     runs-on: ubuntu-latest
 
     steps:
@@ -43,42 +43,24 @@ jobs:
       - name: Install STM32CubeCLI and Toolchain Bundles
         run: |
           curl -fsSL https://developer.st.com/bundles/install/install.sh | bash -
-          export PATH="$HOME/.local/stm32cube/bin:$HOME/.local/bin:$HOME/.stm32cube/bin:$PATH"
+          export PATH="$HOME/.local/stm32cube/bin:$PATH"
           echo "$HOME/.local/stm32cube/bin" >> $GITHUB_PATH
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-          echo "$HOME/.stm32cube/bin" >> $GITHUB_PATH
 
           cube bundle install --project --yes
 
-          # Export discovered toolchain binary directories to GITHUB_PATH
+          # Dynamically export discovered toolchain paths (no hardcoded versions)
           for tool_bin in $(find "$HOME/.local/stm32cube" "$HOME/.stm32cube" "$HOME/.local/share/stm32cube" -type d -name "bin" 2>/dev/null); do
             echo "$tool_bin" >> $GITHUB_PATH
           done
 
-      - name: Verify Toolchain
+      - name: Build & Lint All Supported Boards
         run: |
-          echo "=== Compiler ==="
-          which starm-clang && starm-clang --version || true
-          echo "=== Clang-Tidy ==="
-          clang-tidy --version
-          echo "=== Just ==="
-          just --version
-
-      - name: Build STM32F401RE (Debug)
-        run: just target=f401 build_type=Debug build
-
-      - name: Lint STM32F401RE (clang-tidy)
-        run: just target=f401 build_type=Debug tidy
-
-      - name: Build STM32G491RE (Debug)
-        run: just target=g491 build_type=Debug build
-
-      - name: Lint STM32G491RE (clang-tidy)
-        run: just target=g491 build_type=Debug tidy
-
-      - name: Firmware Memory Footprint
-        run: |
-          echo "=== STM32F401RE Memory Usage ==="
-          just target=f401 size
-          echo "=== STM32G491RE Memory Usage ==="
-          just target=g491 size
+          for board_dir in boards/*/; do
+            board=$(basename "$board_dir")
+            echo "=========================================="
+            echo "Testing Board: $board (Debug)"
+            echo "=========================================="
+            just target=$board build_type=Debug build
+            just target=$board build_type=Debug tidy
+            just target=$board size
+          done

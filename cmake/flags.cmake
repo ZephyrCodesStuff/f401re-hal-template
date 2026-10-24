@@ -91,38 +91,17 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC
     # Symbols specific to Debug build type
     $<$<CONFIG:Debug>: 
       $<$<COMPILE_LANGUAGE:C>: 
-        RTE_DEVICE_STARTUP_STM32F4XX
         DEBUG
       >
 
       $<$<COMPILE_LANGUAGE:CXX>: 
-        RTE_DEVICE_STARTUP_STM32F4XX
         DEBUG
       >
     
       $<$<COMPILE_LANGUAGE:ASM>: 
-        RTE_DEVICE_STARTUP_STM32F4XX
         DEBUG
       >
     >
-
-    
-    # Symbols specific to Release build type
-    $<$<CONFIG:Release>: 
-      $<$<COMPILE_LANGUAGE:C>: 
-        RTE_DEVICE_STARTUP_STM32F4XX
-      >
-
-      $<$<COMPILE_LANGUAGE:CXX>: 
-        RTE_DEVICE_STARTUP_STM32F4XX
-      >
-    
-      $<$<COMPILE_LANGUAGE:ASM>: 
-        RTE_DEVICE_STARTUP_STM32F4XX
-      >
-    >
-
-    
 )
 
 target_link_options(${PROJECT_NAME} PUBLIC 
@@ -131,7 +110,7 @@ target_link_options(${PROJECT_NAME} PUBLIC
   
     # Linker flags specific to Debug build type
     $<$<CONFIG:Debug>: 
-        -T${CMAKE_CURRENT_BINARY_DIR}/stm32f401xe_flash.ld
+        -T${CMAKE_CURRENT_BINARY_DIR}/flash.ld
         -Wl,-Map=${CMAKE_CURRENT_BINARY_DIR}/sandbox.map
         -Wl,--start-group
         -lc
@@ -148,7 +127,7 @@ target_link_options(${PROJECT_NAME} PUBLIC
 
     # Linker flags specific to Release build type
     $<$<CONFIG:Release>: 
-        -T${CMAKE_CURRENT_BINARY_DIR}/stm32f401xe_flash.ld
+        -T${CMAKE_CURRENT_BINARY_DIR}/flash.ld
         -Wl,-Map=${CMAKE_CURRENT_BINARY_DIR}/sandbox.map
         -Wl,--start-group
         -lc
@@ -162,7 +141,6 @@ target_link_options(${PROJECT_NAME} PUBLIC
         -Wl,--print-memory-usage
         -Wl,--gc-sections
     >
-
 )
 # Clean .map file
 set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_CLEAN_FILES "${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/${PROJECT_NAME}.map")

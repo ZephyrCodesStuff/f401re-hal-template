@@ -6,19 +6,36 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 set(CMAKE_C_COMPILER_FORCED TRUE)
 set(CMAKE_CXX_COMPILER_FORCED TRUE)
 
-# Target MCU selection: STM32F401RE (default) or STM32G491RE
-set(TARGET_MCU "STM32F401RE" CACHE STRING "Target MCU: STM32F401RE or STM32G491RE")
-set_property(CACHE TARGET_MCU PROPERTY STRINGS STM32F401RE STM32G491RE)
+# Target Board selection (from boards/<TARGET_BOARD>)
+set(TARGET_BOARD "STM32F401RE" CACHE STRING "Target board configuration (from boards/<TARGET_BOARD>)")
 
-# Set target definition variables required by the toolchain file
+# Load Board Configuration (supports exact name e.g. STM32F401RE or substring e.g. f401)
+set(BOARD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/boards/${TARGET_BOARD}")
+if(NOT EXISTS "${BOARD_DIR}/board.cmake")
+    file(GLOB _CANDIDATES "${CMAKE_CURRENT_SOURCE_DIR}/boards/*${TARGET_BOARD}*")
+    list(LENGTH _CANDIDATES _NUM_CANDIDATES)
+    if(_NUM_CANDIDATES GREATER 0)
+        list(GET _CANDIDATES 0 _FOUND_DIR)
+        set(BOARD_DIR "${_FOUND_DIR}")
+        get_filename_component(TARGET_BOARD "${_FOUND_DIR}" NAME)
+    else()
+        message(FATAL_ERROR "Board configuration not found for '${TARGET_BOARD}' in 'boards/'.")
+    endif()
+endif()
+include(${BOARD_DIR}/board.cmake)
+
+# Linker script and startup file defaults for the active board
+set(BOARD_LINKER_SCRIPT "${BOARD_DIR}/flash.ld")
+
+# Set target definition variables required by starm-clang.cmake
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/target.cmake)
 
-# Auto-detect ninja build tool across Linux (apt) and macOS (brew / ST bundles)
+# Auto-detect ninja build tool across Linux (apt / ST bundles) and macOS (brew / ST bundles)
 file(GLOB _CUBE_NINJA_DIRS
   "$ENV{HOME}/Library/Application Support/stm32cube/bundles/ninja/*/bin"
   "$ENV{HOME}/.local/stm32cube/bundles/ninja/*/bin"
-  "$ENV{HOME}/.stm32cube/bundles/ninja/*/bin"
   "$ENV{HOME}/.local/share/stm32cube/bundles/ninja/*/bin"
+  "$ENV{HOME}/.stm32cube/bundles/ninja/*/bin"
 )
 if(NOT CMAKE_MAKE_PROGRAM)
   find_program(NINJA_EXECUTABLE NAMES ninja ninja-build
@@ -37,8 +54,8 @@ endif()
 file(GLOB _CUBE_CLANG_DIRS
   "$ENV{HOME}/Library/Application Support/stm32cube/bundles/st-arm-clang/*/bin"
   "$ENV{HOME}/.local/stm32cube/bundles/st-arm-clang/*/bin"
-  "$ENV{HOME}/.stm32cube/bundles/st-arm-clang/*/bin"
   "$ENV{HOME}/.local/share/stm32cube/bundles/st-arm-clang/*/bin"
+  "$ENV{HOME}/.stm32cube/bundles/st-arm-clang/*/bin"
 )
 find_program(STARM_CLANG_EXE NAMES starm-clang
   PATHS ${_CUBE_CLANG_DIRS}
@@ -66,11 +83,11 @@ add_executable(${PROJECT_NAME})
 # Optional CMSIS-RTOS v2 wrapper (CubeMX compatibility: osEventFlagsWait, osThreadNew, etc.)
 option(ENABLE_CMSIS_OS2 "Enable CMSIS-RTOS v2 API wrapper over FreeRTOS" ON)
 
-# Include additional CMake files for flags, components, and files
+# Include flags, HAL components, FreeRTOS, and files
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/flags.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/components.cmake)
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/files.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/hal.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/files.cmake)
 
 if(ENABLE_CMSIS_OS2)
   include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/freertos-cmsis.cmake)
@@ -78,34 +95,9 @@ else()
   include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/freertos.cmake)
 endif()
 
-# Add sources to executable/library
-target_sources(${PROJECT_NAME} PRIVATE
-  # User defined sources
-)
-
-# Add include directories
+# Add board-specific include directory (for stm32..._hal_conf.h)
 target_include_directories(${PROJECT_NAME} PRIVATE
-  # User defined include directories
-)
-
-# Compiler options
-target_compile_options(${PROJECT_NAME} PRIVATE
-  # User defined compiler options
-)
-
-# Add additional defined symbols
-target_compile_definitions(${PROJECT_NAME} PRIVATE
-  # Add additional defined symbols here
-)
-
-# Linker options
-target_link_options(${PROJECT_NAME} PRIVATE 
-  # User defined linker options
-)
-
-# Add additional linker search directories
-target_link_directories(${PROJECT_NAME} PRIVATE
-  # Add additional linker search directories here
+  "${BOARD_DIR}"
 )
 
 # Add additional linker libraries
@@ -116,4 +108,23 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
   # FreeRTOS Kernel (or CMSIS-RTOS2 wrapper)
   $<$<BOOL:${ENABLE_CMSIS_OS2}>:cmsis_os2>
   $<$<NOT:$<BOOL:${ENABLE_CMSIS_OS2}>>:freertos_kernel>
+)
+
+# Generate flashable binary (.bin) and Intel HEX (.hex) artifacts
+if(CMAKE_OBJCOPY)
+  add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:${PROJECT_NAME}> $<TARGET_FILE_DIR:${PROJECT_NAME}>/${PROJECT_NAME}.bin
+    COMMAND ${CMAKE_OBJCOPY} -O ihex $<TARGET_FILE:${PROJECT_NAME}> $<TARGET_FILE_DIR:${PROJECT_NAME}>/${PROJECT_NAME}.hex
+    COMMENT "Generating flash artifacts: ${PROJECT_NAME}.bin and ${PROJECT_NAME}.hex"
+  )
+endif()
+
+# Export board runtime parameters for tooling (e.g. just flash, probe-rs, openocd)
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/board.env"
+"BOARD_NAME=\"${BOARD_NAME}\"
+MCU_MODEL=\"${MCU_MODEL}\"
+PROBE_CHIP=\"${PROBE_CHIP}\"
+OPENOCD_TARGET=\"${OPENOCD_TARGET}\"
+ELF_FILE=\"${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.elf\"
+"
 )
