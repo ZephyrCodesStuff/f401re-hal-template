@@ -1,17 +1,61 @@
-Checks: "*,
-  -abseil-*,
-  -altera-*,
-  -android-*,
-  -fuchsia-*,
-  -google-*,
-  -llvm*,
-  -modernize-use-trailing-return-type,
-  -zircon-*,
+---
+# ==============================================================================
+# Clang-Tidy Configuration for Aerospace & Safety-Critical Embedded Firmware
+# Aligned with CERT C, MISRA-C principles, and DO-178C static analysis goals
+# ==============================================================================
+
+# Start by disabling everything, then opt-in strictly to safety, correctness,
+# and reliability checks. (Avoids C++ modernizations polluting pure C firmware).
+Checks: >
+  -*,
+
+  # --- CERT C Secure Coding Standard ---
+  cert-*,
+  -cert-cplusplus-*,
+  -cert-dcl16-c,
+
+  # --- Bug Prevention, Undefined Behavior & Arithmetic Safety ---
+  bugprone-*,
+  -bugprone-easily-swappable-parameters,
+
+  # --- Clang Static Analyzer (Deep Path-Sensitive Verification) ---
+  clang-analyzer-core.*,
+  clang-analyzer-security.*,
+  clang-analyzer-deadcode.*,
+  clang-analyzer-valist.*,
+  -clang-analyzer-cplusplus.*,
+
+  # --- Embedded Performance ---
+  performance-*,
+  -performance-for-range-copy,
+
+  # --- Readability & Defensive Programming ---
+  readability-*,
   -readability-else-after-return,
-  -readability-static-accessed-through-instance,
   -readability-avoid-const-params-in-decls,
-  -cppcoreguidelines-non-private-member-variables-in-classes,
-  -misc-non-private-member-variables-in-classes"
-WarningsAsErrors: ""
-HeaderFilterRegex: ""
+  -readability-magic-numbers,
+  -readability-function-cognitive-complexity,
+
+  # --- Miscellaneous Safety Checks ---
+  misc-*,
+  -misc-non-private-member-variables-in-classes,
+  -misc-unused-parameters
+
+# CRITICAL: Only analyze project headers (Inc/ and Src/).
+# Exclude vendor dependencies (_deps: CMSIS, HAL, FreeRTOS).
+HeaderFilterRegex: '(Src|Inc)/.*'
+
+# In aerospace/mission-critical firmware, warnings must be treated as errors
+WarningsAsErrors: '*'
+
+CheckOptions:
+  # Floating point equality (==) is dangerous in control loops and flight sensors
+  bugprone-floating-point-comparison.IgnorePrecision: false
+
+  # Ensure macro parameters are properly parenthesized to prevent operator precedence bugs
+  bugprone-macro-parentheses.CheckType: Exact
+
+  # Catch suspicious sizeof pointer bugs common in DMA and buffer operations
+  bugprone-sizeof-expression.WarnOnSizeOfPointer: true
+
 FormatStyle: file

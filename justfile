@@ -85,6 +85,15 @@ size target=target build_type=build_type:
         size "{{_elf}}"
     fi
 
+# Run clang-tidy static analysis on application source files
+tidy target=target build_type=build_type:
+    #!/usr/bin/env bash
+    if command -v clang-tidy >/dev/null 2>&1; then
+        clang-tidy Src/*.c -p "build/{{_preset}}"
+    else
+        echo "clang-tidy command not found. (Install via 'brew install llvm')"
+    fi
+
 # Clean build artifacts
 clean target="":
     #!/usr/bin/env bash
