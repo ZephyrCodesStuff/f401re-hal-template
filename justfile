@@ -39,6 +39,7 @@ configure target=target build_type=build_type cmsis=cmsis:
         -DCMAKE_BUILD_TYPE="{{build_type}}" \
         -DTARGET_BOARD="${BOARD}" \
         -DENABLE_CMSIS_OS2="${ENABLE_CMSIS}"
+    ln -sfn "${BOARD}-{{build_type}}/compile_commands.json" "build/compile_commands.json" 2>/dev/null || true
 
 # Build firmware binary, auto-configuring if needed
 build target=target build_type=build_type cmsis=cmsis:
@@ -55,6 +56,7 @@ build target=target build_type=build_type cmsis=cmsis:
             -DTARGET_BOARD="${BOARD}" \
             -DENABLE_CMSIS_OS2="${ENABLE_CMSIS}"
     fi
+    ln -sfn "${BOARD}-{{build_type}}/compile_commands.json" "build/compile_commands.json" 2>/dev/null || true
     cmake --build "${BUILD_DIR}"
 
 # Flash firmware to the microcontroller (sources board parameters dynamically)

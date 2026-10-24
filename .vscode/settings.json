@@ -6,15 +6,17 @@
     "cmake.preferredGenerators": [
         "Ninja"
     ],
+    "cmake.copyCompileCommands": "${workspaceFolder}/build/compile_commands.json",
     "stm32cube-ide-clangd.path": "cube",
     "stm32cube-ide-clangd.arguments": [
         "starm-clangd",
+        "--compile-commands-dir=${workspaceFolder}/build",
         "--query-driver=${env:CUBE_BUNDLE_PATH}/st-arm-clang/21.1.1+st.7/bin/starm-clang*",
         "--query-driver=${env:CUBE_BUNDLE_PATH}/st-arm-clang/21.1.1+st.7/bin/starm-clang++*"
     ],
     "editor.formatOnSave": true,
     "[c]": {
-        "editor.defaultFormatter": "xaver.clang-format",
+        "editor.defaultFormatter": "xaver.clang-format"
     },
     "[json]": {
         "editor.defaultFormatter": "vscode.json-language-features"

@@ -128,3 +128,10 @@ OPENOCD_TARGET=\"${OPENOCD_TARGET}\"
 ELF_FILE=\"${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.elf\"
 "
 )
+
+# Expose active compile_commands.json at build/compile_commands.json for clangd & VS Code LSP
+file(CREATE_LINK
+  "${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json"
+  "${CMAKE_CURRENT_SOURCE_DIR}/build/compile_commands.json"
+  SYMBOLIC COPY_ON_ERROR
+)
