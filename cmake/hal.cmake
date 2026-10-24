@@ -64,6 +64,7 @@ target_compile_options(stm32_hal PUBLIC
 
 target_compile_definitions(stm32_hal PUBLIC
     ${MCU_DEF}
+    BOARD_${BOARD_NAME}
     USE_HAL_DRIVER
     STM32_HAL_HEADER="stm32${MCU_FAMILY}xx_hal.h"
 )
