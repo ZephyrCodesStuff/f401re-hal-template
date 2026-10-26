@@ -129,9 +129,10 @@ ELF_FILE=\"${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.elf\"
 "
 )
 
-# Expose active compile_commands.json at build/compile_commands.json for clangd & VS Code LSP
-file(CREATE_LINK
-  "${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json"
-  "${CMAKE_CURRENT_SOURCE_DIR}/build/compile_commands.json"
-  SYMBOLIC COPY_ON_ERROR
+# Automatically update build/compile_commands.json for clangd on every build
+add_custom_target(sync_compile_commands ALL
+  COMMAND ${CMAKE_COMMAND} -E create_symlink
+    "${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json"
+    "${CMAKE_CURRENT_SOURCE_DIR}/build/compile_commands.json"
+  COMMENT "Linking active compile_commands.json for target ${TARGET_BOARD}..."
 )

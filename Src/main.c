@@ -9,7 +9,8 @@ void vApplicationTickHook( void )
 
 static void BlinkTask( void* pvParameters )
 {
-    (void)pvParameters;
+    UNUSED( pvParameters );
+
     for ( ;; )
     {
         HAL_GPIO_TogglePin( GPIOA, GPIO_PIN_5 );
@@ -31,7 +32,7 @@ int main( void )
     xTaskCreate( BlinkTask, "Blink", 128, NULL, 1, NULL );
 
     uint32_t res = osEventFlagsWait( NULL, 0x01, osFlagsWaitAny, 0 );
-    (void)res;
+    UNUSED( res );
 
     vTaskStartScheduler();
 

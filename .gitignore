@@ -1,3 +1,6 @@
+# clangd cached data
+.cache
+
 build
 mx.scratch
 !.settings
