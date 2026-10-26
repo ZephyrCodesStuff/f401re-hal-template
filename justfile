@@ -131,7 +131,7 @@ lint target=target build_type=build_type:
     fi
     FILES=$(find Src -name "*.c" ! -name "sys*.c")
     echo "Running static analysis on: $FILES (${BOARD})"
-    clang-tidy $FILES -p "$BUILD_DIR" --warnings-as-errors='*'
+    clang-tidy $FILES -p "$BUILD_DIR" --extra-arg=--sysroot=/dummy --quiet --warnings-as-errors='*'
 
 # Clean build artifacts (specify target to clean one board, or 'all')
 clean target="all":
