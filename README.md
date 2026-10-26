@@ -12,6 +12,16 @@ A lightweight, modern STM32 + FreeRTOS boilerplate powered by **CMake FetchConte
 
 ## Prerequisites
 
+### Recommended Toolchain
+
+- **ST-Arm-Clang** - either the official package, or the [STM32Cube for VS Code](https://marketplace.visualstudio.com/items?itemName=STMicroelectronics.stm32cubeide-vscode-extension-pack) extension which automatically provisions the toolchain on both Linux and macOS.
+- **`clangd`** extension for VS Code (or `clangd` binary on Linux/macOS) - provides code completion, navigation, and diagnostics.
+  - **`clang-tidy`** - optional, but recommended for static analysis and code quality checks.
+- **`just`** - simple command runner for building, flashing, and debugging.
+- **`probe-rs`** - cross-platform flasher and debugger for STM32 (and more) boards.
+- **CMake** - build system generator, instead of the legacy Makefiles.
+- **Ninja** - fast build system backend for CMake.
+
 ### On Ubuntu / Debian Linux:
 
 ```bash

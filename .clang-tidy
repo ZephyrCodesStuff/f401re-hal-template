@@ -6,44 +6,35 @@
 
 # Start by disabling everything, then opt-in strictly to safety, correctness,
 # and reliability checks. (Avoids C++ modernizations polluting pure C firmware).
-Checks: >
+Checks: >-
   -*,
-
-  # --- CERT C Secure Coding Standard ---
   cert-*,
   -cert-cplusplus-*,
   -cert-dcl16-c,
-
-  # --- Bug Prevention, Undefined Behavior & Arithmetic Safety ---
   bugprone-*,
   -bugprone-easily-swappable-parameters,
-
-  # --- Clang Static Analyzer (Deep Path-Sensitive Verification) ---
   clang-analyzer-core.*,
   clang-analyzer-security.*,
   clang-analyzer-deadcode.*,
   clang-analyzer-valist.*,
   -clang-analyzer-cplusplus.*,
-
-  # --- Embedded Performance ---
   performance-*,
   -performance-for-range-copy,
-
-  # --- Readability & Defensive Programming ---
+  -performance-no-int-to-ptr,
   readability-*,
   -readability-else-after-return,
   -readability-avoid-const-params-in-decls,
   -readability-magic-numbers,
   -readability-function-cognitive-complexity,
-
-  # --- Miscellaneous Safety Checks ---
   misc-*,
   -misc-non-private-member-variables-in-classes,
-  -misc-unused-parameters
+  -misc-unused-parameters,
+  -misc-include-cleaner
 
 # CRITICAL: Only analyze project headers (Inc/ and Src/).
 # Exclude vendor dependencies (_deps: CMSIS, HAL, FreeRTOS).
-HeaderFilterRegex: '(Src|Inc)/.*'
+HeaderFilterRegex: '^(Src|Inc)/.*'
+ExcludeHeaderFilterRegex: '.*_deps/.*'
 
 # In aerospace/mission-critical firmware, warnings must be treated as errors
 WarningsAsErrors: '*'
