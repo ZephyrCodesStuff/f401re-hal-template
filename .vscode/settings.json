@@ -9,7 +9,8 @@
     "clangd.arguments": [
         "--compile-commands-dir=${workspaceFolder}/build",
         "--query-driver=**",
-        "--header-insertion=never"
+        "--header-insertion=never",
+        "--clang-tidy"
     ],
     "editor.formatOnSave": true,
     "[c]": {

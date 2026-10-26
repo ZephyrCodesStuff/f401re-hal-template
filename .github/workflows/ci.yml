@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [main, master]
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
   workflow_dispatch:
 
 concurrency:
@@ -61,6 +61,6 @@ jobs:
             echo "Testing Board: $board (Debug)"
             echo "=========================================="
             just target=$board build_type=Debug build
-            just target=$board build_type=Debug tidy
+            just target=$board build_type=Debug lint
             just target=$board size
           done

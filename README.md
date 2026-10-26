@@ -65,10 +65,13 @@ Build and flash using [`just`](https://github.com/casey/just):
 # 1. Build firmware (defaults to STM32F401RE Debug)
 just build
 
-# 2. Flash to connected board & reset
+# 2. Lint the projects for code quality issues (clang-tidy)
+just lint
+
+# 3. Flash to connected board & reset
 just flash
 
-# 3. Flash and stream live logs / RTT output
+# 4. Flash and stream live logs / RTT output
 just run
 ```
 

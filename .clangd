@@ -1,14 +1,15 @@
 CompileFlags:
   CompilationDatabase: build
-
 Diagnostics:
   UnusedIncludes: None
   ClangTidy:
     Remove:
-      - misc-include-cleaner
+    - misc-include-cleaner
+
 ---
-# Ignore diagnostics in downloaded vendor libraries and build output
+
 If:
   PathMatch: .*/_deps/.*
 Diagnostics:
-  Suppress: ["*"]
+  Suppress:
+  - '*'

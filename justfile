@@ -120,7 +120,7 @@ size target=target build_type=build_type:
     fi
 
 # Run clang-tidy static analysis on application source files
-tidy target=target build_type=build_type:
+lint target=target build_type=build_type:
     #!/usr/bin/env bash
     BOARD=$(./scripts/resolve-board.sh "{{target}}")
     BUILD_DIR="build/${BOARD}-{{build_type}}"
