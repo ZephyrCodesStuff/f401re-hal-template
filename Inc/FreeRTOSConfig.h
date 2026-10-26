@@ -57,7 +57,7 @@ extern uint32_t SystemCoreClock;
 
 /* In CMSIS-RTOS2, cmsis_os2.c implements SysTick_Handler and calls xPortSysTickHandler().
    In pure FreeRTOS, port.c maps directly to SysTick_Handler. */
-#if !defined(USE_CMSIS_OS2)
+#ifndef USE_CMSIS_OS2
 #define xPortSysTickHandler SysTick_Handler
 #endif
 

@@ -122,14 +122,16 @@ size target=target build_type=build_type:
 # Run clang-tidy static analysis on application source files
 lint target=target build_type=build_type:
     #!/usr/bin/env bash
+    set -euo pipefail
     BOARD=$(./scripts/resolve-board.sh "{{target}}")
     BUILD_DIR="build/${BOARD}-{{build_type}}"
-    if command -v clang-tidy >/dev/null 2>&1; then
-        FILES=$(find Src -name "*.c" ! -name "sys*.c")
-        clang-tidy $FILES -p "$BUILD_DIR"
-    else
-        echo "clang-tidy not found. (Install via 'brew install llvm' or 'apt install clang-tidy')"
+    if ! command -v clang-tidy >/dev/null 2>&1; then
+        echo "Error: clang-tidy is required for linting but was not found." >&2
+        exit 1
     fi
+    FILES=$(find Src -name "*.c" ! -name "sys*.c")
+    echo "Running static analysis on: $FILES (${BOARD})"
+    clang-tidy $FILES -p "$BUILD_DIR" --warnings-as-errors='*'
 
 # Clean build artifacts (specify target to clean one board, or 'all')
 clean target="all":

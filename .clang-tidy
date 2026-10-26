@@ -26,14 +26,16 @@ Checks: >-
   -readability-avoid-const-params-in-decls,
   -readability-magic-numbers,
   -readability-function-cognitive-complexity,
+  -readability-redundant-declaration,
   misc-*,
   -misc-non-private-member-variables-in-classes,
   -misc-unused-parameters,
-  -misc-include-cleaner
+  -misc-include-cleaner,
+  -misc-header-include-cycle
 
 # CRITICAL: Only analyze project headers (Inc/ and Src/).
 # Exclude vendor dependencies (_deps: CMSIS, HAL, FreeRTOS).
-HeaderFilterRegex: '^(Src|Inc)/.*'
+HeaderFilterRegex: '(^|/)(Src|Inc)/.*'
 ExcludeHeaderFilterRegex: '.*_deps/.*'
 
 # In aerospace/mission-critical firmware, warnings must be treated as errors

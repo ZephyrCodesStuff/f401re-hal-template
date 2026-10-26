@@ -53,14 +53,23 @@ jobs:
             echo "$tool_bin" >> $GITHUB_PATH
           done
 
-      - name: Build & Lint All Supported Boards
+      - name: Build All Supported Boards
         run: |
           for board_dir in boards/*/; do
             board=$(basename "$board_dir")
             echo "=========================================="
-            echo "Testing Board: $board (Debug)"
+            echo "Building Board: $board (Debug)"
             echo "=========================================="
             just target=$board build_type=Debug build
-            just target=$board build_type=Debug lint
             just target=$board size
+          done
+
+      - name: Run Clang-Tidy Static Analysis (User Code Only)
+        run: |
+          for board_dir in boards/*/; do
+            board=$(basename "$board_dir")
+            echo "=========================================="
+            echo "Linting Board: $board (Debug)"
+            echo "=========================================="
+            just target=$board build_type=Debug lint
           done
